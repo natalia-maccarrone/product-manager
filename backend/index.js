@@ -21,56 +21,76 @@ let mockDb = [
 ];
 
 app.get('/products', (req, res) => {
-    let filteredProducts = mockDb;
+    try {
+        let filteredProducts = mockDb;
 
-    if (req.query.available) {
-        const available = req.query.available === 'true';
-        filteredProducts = filteredProducts.filter(product => product.available === available);
+        if (req.query.available) {
+            const available = req.query.available === 'true';
+            filteredProducts = filteredProducts.filter(product => product.available === available);
+        }
+
+        const sortBy = req.query.sortBy || 'id';
+        filteredProducts = filteredProducts.sort((a, b) => {
+            if (a[sortBy] < b[sortBy]) return -1;
+            if (a[sortBy] > b[sortBy]) return 1;
+            return 0;
+        });
+
+        if (req.query.search) {
+            // This line below replaces all the dots and parenthesis for their escaped versions, so they are not considered as operators for the regex
+            const searchString = req.query.search.replace(/[.()]/g, '\\$&');
+            const searchRegex = new RegExp(searchString, 'i');
+            filteredProducts = filteredProducts.filter(product => searchRegex.test(product.name));
+        }
+
+        res.json(filteredProducts);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"message": `An error occured while getting the products: ${error.message}`});
     }
-
-    const sortBy = req.query.sortBy || 'id';
-    filteredProducts = filteredProducts.sort((a, b) => {
-        if (a[sortBy] < b[sortBy]) return -1;
-        if (a[sortBy] > b[sortBy]) return 1;
-        return 0;
-    });
-
-    if (req.query.search) {
-        // This line below replaces all the dots and parenthesis for their escaped versions, so they are not considered as operators for the regex
-        const searchString = req.query.search.replace(/[.()]/g, '\\$&')
-        const searchRegex = new RegExp(searchString, 'i');
-        filteredProducts = filteredProducts.filter(product => searchRegex.test(product.name));
-    }
-
-    res.json(filteredProducts);
 });
 
 app.post('/products', (req, res) => {
-    const newProduct = {
-        id: mockDb.length + 1,
-        name: req.body.name,
-        available: req.body.available || true
-    };
-    mockDb.push(newProduct);
-    res.status(201).json(newProduct);
+    try {
+        const newProduct = {
+            id: mockDb.length + 1,
+            name: req.body.name,
+            available: req.body.available || true
+        };
+        mockDb.push(newProduct);
+        res.status(201).json(newProduct);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"message": `An error occured while adding the product: ${error.message}`});
+    }
 });
 
 app.put('/products/:id', (req, res) => {
-    const productId = parseInt(req.params.id);
-    const product = mockDb.find(p => p.id === productId);
+    try {
+        const productId = parseInt(req.params.id);
+        const product = mockDb.find(p => p.id === productId);
 
-    if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        product.name = req.body.name !== undefined ? req.body.name : product.name;
+        product.available = req.body.available !== undefined ? req.body.available : product.available;
+
+        res.json(product);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"message": `An error occured while updating the product: ${error.message}`});
     }
-
-    product.name = req.body.name !== undefined ? req.body.name : product.name;
-    product.available = req.body.available !== undefined ? req.body.available : product.available;
-
-    res.json(product);
 });
 
 app.delete('/products/:id', (req, res) => {
-    const productId = parseInt(req.params.id);
-    mockDb = mockDb.filter(p => p.id !== productId);
-    res.status(204).send();
+    try {
+        const productId = parseInt(req.params.id);
+        mockDb = mockDb.filter(p => p.id !== productId);
+        res.status(204).send();
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({"message": `An error occured while deleting the product: ${error.message}`});
+    }
 });
