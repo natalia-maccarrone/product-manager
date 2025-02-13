@@ -87,8 +87,13 @@ app.put('/products/:id', (req, res) => {
 app.delete('/products/:id', (req, res) => {
     try {
         const productId = parseInt(req.params.id);
-        mockDb = mockDb.filter(p => p.id !== productId);
-        res.status(204).send();
+        const product = mockDb.find(product => product.id === productId);
+        if (!product.available) {
+            mockDb = mockDb.filter(p => p.id !== productId);
+            res.status(204).send();
+        } else {
+            throw Error('Available products cannot be deleted.')
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({"message": `An error occured while deleting the product: ${error.message}`});
