@@ -36,7 +36,9 @@ app.get('/products', (req, res) => {
     });
 
     if (req.query.search) {
-        const searchRegex = new RegExp(req.query.search, 'i');
+        // This line below replaces all the dots and parenthesis for their escaped versions, so they are not considered as operators for the regex
+        const searchString = req.query.search.replace(/[.()]/g, '\\$&')
+        const searchRegex = new RegExp(searchString, 'i');
         filteredProducts = filteredProducts.filter(product => searchRegex.test(product.name));
     }
 
