@@ -6,9 +6,11 @@ app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-  console.log("Server is Listening on PORT:", PORT);
-});
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(PORT, () => {
+        console.log("Server is Listening on PORT:", PORT);
+    });
+}
 
 let mockDb = [
     { id: 1, name: 'Fries', available: true },
@@ -88,14 +90,21 @@ app.delete('/products/:id', (req, res) => {
     try {
         const productId = parseInt(req.params.id);
         const product = mockDb.find(product => product.id === productId);
-        if (!product.available) {
-            mockDb = mockDb.filter(p => p.id !== productId);
-            res.status(204).send();
-        } else {
-            throw Error('Available products cannot be deleted.')
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
         }
+
+        if (product.available) {
+            return res.status(400).json({ message: 'Available products cannot be deleted' });
+        }
+
+        mockDb = mockDb.filter(p => p.id !== productId);
+        res.status(204).send();
     } catch (error) {
         console.log(error);
-        res.status(500).json({"message": `An error occured while deleting the product: ${error.message}`});
+        res.status(500).json({"message": `An error occurred while deleting the product: ${error.message}`});
     }
 });
+
+module.exports = app;

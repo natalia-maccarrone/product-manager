@@ -15,8 +15,10 @@ const FilterSortForm: React.FC<FilterSortFormProps> = ({ filter, handleFilterCha
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
-            <InputLabel>Sort By</InputLabel>
+            <InputLabel id="sort-by-label">Sort By</InputLabel>
             <Select
+              labelId="sort-by-label"
+              id="sort-by-select"
               name="sortBy"
               value={filter.sortBy}
               onChange={handleFilterChange}
