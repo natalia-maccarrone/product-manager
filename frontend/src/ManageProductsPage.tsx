@@ -14,8 +14,10 @@ const ManageProductsPage: React.FC = () => {
   };
 
   const handleAddProduct = () => {
-    addProduct(newProduct);
-    setNewProduct({ name: '', available: true });
+    if (newProduct.name) {
+      addProduct(newProduct);
+      setNewProduct({ name: '', available: true });
+    }
   };
 
   const handleDeleteProduct = (id: number) => {
