@@ -24,7 +24,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ newProduct, handleInputChange
           />
         </Grid>
         <Grid item xs={12} sm={3}>
-          <Button variant="contained" color="primary" onClick={handleAddProduct} fullWidth>
+          <Button variant="contained" color="primary" onClick={handleAddProduct} fullWidth disabled={!newProduct.name}>
             Add Product
           </Button>
         </Grid>
