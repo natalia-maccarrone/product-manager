@@ -7,21 +7,19 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 interface AlertDialogProps {
-  children: React.ReactNode;
   open: boolean;
   setOpen: (open: boolean) => void;
   onConfirm: () => void;
   message: string;
 }
 
-export default function AlertDialog({children, onConfirm, open, setOpen, message}: AlertDialogProps) {
+export default function AlertDialog({onConfirm, open, setOpen, message}: AlertDialogProps) {
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
     <React.Fragment>
-      {children}
       <Dialog
         open={open}
         onClose={handleClose}
@@ -29,7 +27,7 @@ export default function AlertDialog({children, onConfirm, open, setOpen, message
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Are you sure?"}
+          Are you sure?
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
@@ -37,13 +35,13 @@ export default function AlertDialog({children, onConfirm, open, setOpen, message
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={() => {
               onConfirm();
               handleClose();
             }} 
             autoFocus>
-            Agree
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

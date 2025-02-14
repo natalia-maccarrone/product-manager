@@ -15,11 +15,14 @@ interface ProductTableProps {
 
 const ProductTable: React.FC<ProductTableProps> = ({ products, handleDeleteProduct }) => {
   const [open, setOpen] = React.useState(false);
-  const [selectedProductId, setSelectedProductId] = React.useState<number | null>(null);
+  const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null);
 
-  const onConfirmDelete = () => selectedProductId && handleDeleteProduct(selectedProductId);
+  const onConfirmDelete = () => selectedProduct && handleDeleteProduct(selectedProduct.id);
 
-  const handleClickOpen = () => setOpen(true);
+  const handleClickOpen = (product: Product) => {
+    setSelectedProduct(product);
+    setOpen(true);
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -37,20 +40,25 @@ const ProductTable: React.FC<ProductTableProps> = ({ products, handleDeleteProdu
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.available ? 'Yes' : 'No'}</TableCell>
               <TableCell>
-                <AlertDialog onConfirm={onConfirmDelete} open={open} setOpen={setOpen} message="This will permanently delete this product">
-                  <Button variant="contained" color="error" onClick={() => {
-                      setSelectedProductId(product.id); 
-                      handleClickOpen();
-                    }}
-                    disabled={product.available}>
-                    Delete
-                  </Button>
-                </AlertDialog>
+                <Button 
+                  variant="contained" 
+                  color="error" 
+                  onClick={() => handleClickOpen(product)}
+                  disabled={product.available}
+                >
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <AlertDialog 
+        onConfirm={onConfirmDelete} 
+        open={open} 
+        setOpen={setOpen} 
+        message={`This will permanently delete ${selectedProduct?.name ?? 'this product'}.`}
+      />
     </TableContainer>
   );
 };
