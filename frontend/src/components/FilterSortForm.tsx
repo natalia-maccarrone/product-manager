@@ -1,45 +1,30 @@
-import React from 'react';
-import { FormControl, InputLabel, Select, MenuItem, Grid, Typography, Box, TextField } from '@mui/material';
+import React from "react";
+import { Grid2, Typography, Box, TextField } from "@mui/material";
 
 interface FilterSortFormProps {
-  filter: { sortBy: string; search: string };
+  filters: { sortBy: string; search: string };
   handleFilterChange: (e: any) => void;
 }
-
-const FilterSortForm: React.FC<FilterSortFormProps> = ({ filter, handleFilterChange }) => {
+const FilterForm: React.FC<FilterSortFormProps> = ({
+  filters,
+  handleFilterChange,
+}) => {
   return (
     <Box mb={4}>
       <Typography variant="h5" gutterBottom>
         Filter and Sort Products
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel id="sort-by-label">Sort By</InputLabel>
-            <Select
-              labelId="sort-by-label"
-              id="sort-by-select"
-              name="sortBy"
-              value={filter.sortBy}
-              onChange={handleFilterChange}
-            >
-              <MenuItem value="">None</MenuItem>
-              <MenuItem value="name">Name</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Search"
-            name="search"
-            value={filter.search}
-            onChange={handleFilterChange}
-            fullWidth
-          />
-        </Grid>
-      </Grid>
+      <Grid2>
+        <TextField
+          label="Search"
+          name="search"
+          value={filters.search}
+          onChange={handleFilterChange}
+          fullWidth
+        />
+      </Grid2>
     </Box>
   );
 };
 
-export default FilterSortForm;
+export default FilterForm;

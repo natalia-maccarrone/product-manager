@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   available: boolean;
 }
 
-interface NewProduct {
+export interface NewProduct {
   name: string;
   available: boolean;
 }
 
-interface Filters {
+export interface Filters {
   sortBy: string;
+  sortDir: string;
   search: string;
 }
 
@@ -26,36 +27,61 @@ const useProducts = (initialFilters: Filters) => {
   }, [filters]);
 
   const fetchProducts = () => {
-    let query = `http://localhost:3000/products?`;
-    if (filters.sortBy) query += `sortBy=${filters.sortBy}&`;
-    if (filters.search) query += `search=${filters.search}&`;
+    let url = `http://localhost:3000/products`;
 
-    axios.get(query)
-      .then(response => {
+    axios
+      .get(url, { params: filters })
+      .then((response) => {
         setProducts(response.data);
       })
-      .catch(error => {
-        console.error('There was an error fetching the products!', error);
+      .catch((error) => {
+        console.error("There was an error fetching the products!", error);
       });
   };
 
   const addProduct = (newProduct: NewProduct) => {
-    axios.post('http://localhost:3000/products', newProduct)
-      .then(response => {
+    axios
+      .post("http://localhost:3000/products", newProduct)
+      .then((response) => {
         setProducts([...products, response.data]);
       })
-      .catch(error => {
-        console.error('There was an error adding the product!', error);
+      .catch((error) => {
+        console.error("There was an error adding the product!", error);
       });
   };
 
   const deleteProduct = (id: number) => {
-    axios.delete(`http://localhost:3000/products/${id}`)
+    axios
+      .delete(`http://localhost:3000/products/${id}`)
       .then(() => {
-        setProducts(products.filter(product => product.id !== id));
+        setProducts(products.filter((product) => product.id !== id));
       })
-      .catch(error => {
-        console.error('There was an error deleting the product!', error);
+      .catch((error) => {
+        console.error("There was an error deleting the product!", error);
+      });
+  };
+
+  // added this to allow modifying product properties like name and availability
+  const updateProduct = ({
+    id,
+    name,
+    available,
+  }: {
+    id: number;
+    name?: string;
+    available?: boolean;
+  }) => {
+    axios
+      .put(`http://localhost:3000/products/${id}`, { name, available })
+      .then((response) => {
+        setProducts((prevProducts) =>
+          prevProducts.map((product) =>
+            product.id === id ? response.data : product
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the product!", error);
       });
   };
 
@@ -65,6 +91,7 @@ const useProducts = (initialFilters: Filters) => {
     setFilters,
     addProduct,
     deleteProduct,
+    updateProduct,
   };
 };
 

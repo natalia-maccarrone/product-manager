@@ -1,12 +1,40 @@
-import React, { useState } from 'react';
-import { Container } from '@mui/material';
-import ProductForm from './components/ProductForm';
-import ProductTable from './components/ProductTable';
-import useProducts from './hooks/useProducts';
+import React, { useEffect, useState } from "react";
+import { Container } from "@mui/material";
+import ProductForm from "./components/ProductForm";
+import ProductTable from "./components/ProductTable";
+import { Filters, NewProduct, Product } from "./hooks/useProducts";
 
-const ManageProductsPage: React.FC = () => {
-  const { products, addProduct, deleteProduct } = useProducts({ sortBy: '', search: '' });
-  const [newProduct, setNewProduct] = useState({ name: '', available: true });
+interface ManageProductsPageProps {
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+  products: Product[];
+  deleteProduct(id: number): void;
+  addProduct(newProduct: NewProduct): void;
+  updateProduct({
+    id,
+    name,
+    available,
+  }: {
+    id: number;
+    name?: string;
+    available?: boolean;
+  }): void;
+}
+
+const ManageProductsPage: React.FC<ManageProductsPageProps> = ({
+  filters,
+  setFilters,
+  products,
+  deleteProduct,
+  addProduct,
+  updateProduct,
+}) => {
+  // This ensures that the product list isn’t filtered by an old search term when navigating to the page
+  useEffect(() => {
+    setFilters({ ...filters, search: "" });
+  }, []);
+
+  const [newProduct, setNewProduct] = useState({ name: "", available: true });
 
   const handleInputChange = (e: any) => {
     const { name, value } = e.target;
@@ -16,7 +44,7 @@ const ManageProductsPage: React.FC = () => {
   const handleAddProduct = () => {
     if (newProduct.name) {
       addProduct(newProduct);
-      setNewProduct({ name: '', available: true });
+      setNewProduct({ name: "", available: true });
     }
   };
 
@@ -25,7 +53,7 @@ const ManageProductsPage: React.FC = () => {
   };
 
   return (
-    <Container>
+    <Container disableGutters>
       <ProductForm
         newProduct={newProduct}
         handleInputChange={handleInputChange}
@@ -34,6 +62,9 @@ const ManageProductsPage: React.FC = () => {
       <ProductTable
         products={products}
         handleDeleteProduct={handleDeleteProduct}
+        filters={filters}
+        setFilters={setFilters}
+        handleUpdateProduct={updateProduct}
       />
     </Container>
   );
