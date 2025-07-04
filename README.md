@@ -1,3 +1,13 @@
+# Product Manager
+
+This is a small full-stack application for managing restaurant products. It is a simplified version of a real project, it includes a frontend built with React/TypeScript and a backend API built with Node.js.
+
+## Instructions
+
+Complete the following tasks in any way that you wish. You can change the frontend, the backend, or both—whatever you think is best.
+
+Refer to the README files in the respective frontend/backend directories for details on how to run each app.
+
 ## Features and bug fixes Implemented
 
 1. **Search Product Names with Special Characters**
