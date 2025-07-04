@@ -1,11 +1,11 @@
-# Product manager coding task - Frontend 
+# Product manager coding task - Frontend
 
 This is the frontend application for managing restaurant products. It is built with React and Typescript and uses Material UI for the UI components.
 
 ## Prerequisites
 
-* Node.js (version 23.x or later)
-* npm (version 11.x or later)
+- Node.js (version 22.x or later)
+- npm (version 11.x or later)
 
 ## Getting Started
 
